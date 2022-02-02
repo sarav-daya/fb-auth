@@ -1,5 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fb_auth_provider/pages/home_page.dart';
+import 'package:fb_auth_provider/pages/signin_page.dart';
+import 'package:fb_auth_provider/pages/signup_page.dart';
+import 'package:fb_auth_provider/pages/splash_page.dart';
+import 'package:fb_auth_provider/providers/auth_provider.dart';
+import 'package:fb_auth_provider/repositories/auth_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fbAuth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,58 +21,37 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+    return MultiProvider(
+      providers: [
+        Provider<AuthRepository>(
+          create: (context) => AuthRepository(
+              firebaseFirestore: FirebaseFirestore.instance,
+              firebaseAuth: fbAuth.FirebaseAuth.instance),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        StreamProvider<fbAuth.User?>(
+          create: (context) => context.read<AuthRepository>().user,
+          initialData: null,
+        ),
+        ChangeNotifierProxyProvider<fbAuth.User?, AuthProvider>(
+          create: (context) => AuthProvider(
+            authRepository: context.read<AuthRepository>(),
+          ),
+          update: (BuildContext context, fbAuth.User? user,
+                  AuthProvider? authProvider) =>
+              authProvider!..update(user),
+        )
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: SplashPage(),
+        routes: {
+          SignupPage.routeName: (context) => SignupPage(),
+          SigninPage.routeName: (context) => SigninPage(),
+          HomePage.routeName: (context) => HomePage(),
+        },
       ),
     );
   }
