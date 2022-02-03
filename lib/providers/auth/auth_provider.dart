@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fbAuth;
-import 'package:fb_auth_provider/providers/auth_state.dart';
+import 'package:fb_auth_provider/providers/auth/auth_state.dart';
 import 'package:fb_auth_provider/repositories/auth_repository.dart';
 
 class AuthProvider with ChangeNotifier {

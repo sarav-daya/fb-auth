@@ -3,12 +3,16 @@ import 'package:fb_auth_provider/pages/home_page.dart';
 import 'package:fb_auth_provider/pages/signin_page.dart';
 import 'package:fb_auth_provider/pages/signup_page.dart';
 import 'package:fb_auth_provider/pages/splash_page.dart';
-import 'package:fb_auth_provider/providers/auth_provider.dart';
+import 'package:fb_auth_provider/providers/auth/auth_provider.dart';
+import 'package:fb_auth_provider/providers/signin/signin_provider.dart';
 import 'package:fb_auth_provider/repositories/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fbAuth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+import 'providers/signup/signup_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +25,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+    );
     return MultiProvider(
       providers: [
         Provider<AuthRepository>(
@@ -39,10 +46,21 @@ class MyApp extends StatelessWidget {
           update: (BuildContext context, fbAuth.User? user,
                   AuthProvider? authProvider) =>
               authProvider!..update(user),
-        )
+        ),
+        ChangeNotifierProvider<SigninProvider>(
+          create: (context) => SigninProvider(
+            authRepository: context.read<AuthRepository>(),
+          ),
+        ),
+        ChangeNotifierProvider<SignupProvider>(
+          create: (context) => SignupProvider(
+            authRepository: context.read<AuthRepository>(),
+          ),
+        ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Firebase Auth App',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
