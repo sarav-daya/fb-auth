@@ -18,12 +18,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    print('initState');
     profileProvider = context.read<ProfileProvider>();
-    _profileListener = profileProvider.addListener(errorDialogListener);
+    _profileListener = profileProvider.addListener(errorDialogListener,
+        fireImmediately: false);
     _getProfile();
   }
 
   void errorDialogListener(ProfileState state) {
+    print('errorDialog');
     if (state.profileStatus == ProfileStatus.error) {
       errorDialog(context, state.error);
     }
@@ -31,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void dispose() {
+    print('dispose');
     _profileListener();
     super.dispose();
   }
@@ -38,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _getProfile() {
     final String uid = context.read<fbAuth.User?>()!.uid;
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      context.read<ProfileProvider>().getProfile(uid: uid);
+      context.read<ProfileProvider>().getProfile(uid: 'uid');
     });
   }
 
@@ -139,6 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    print('build');
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
