@@ -40,7 +40,7 @@ class _SigninPageState extends State<SigninPage> {
 
   @override
   Widget build(BuildContext context) {
-    final signinState = context.read<SigninProvider>().state;
+    final signinState = context.read<SigninState>();
     return WillPopScope(
       onWillPop: () async => false,
       child: GestureDetector(
