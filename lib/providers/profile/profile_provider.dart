@@ -20,6 +20,7 @@ class ProfileProvider with ChangeNotifier {
     try {
       final user = await profileRepository.getProfile(uid: uid);
       _state = _state.copyWith(profileStatus: ProfileStatus.loaded, user: user);
+      notifyListeners();
     } on CustomError catch (e) {
       _state = _state.copyWith(profileStatus: ProfileStatus.error, error: e);
       notifyListeners();

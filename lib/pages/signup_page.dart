@@ -1,6 +1,4 @@
 import 'package:fb_auth_provider/models/custom_error.dart';
-import 'package:fb_auth_provider/pages/signin_page.dart';
-
 import 'package:fb_auth_provider/providers/signup/signup_provider.dart';
 import 'package:fb_auth_provider/providers/signup/signup_state.dart';
 import 'package:fb_auth_provider/utils/error_dialog.dart';
